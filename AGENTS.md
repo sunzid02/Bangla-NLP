@@ -5,6 +5,11 @@ research workflow and verification standards and do not depend on any specific t
 assistant. (For repository orientation, see `CLAUDE.md`; for reusable task instructions,
 see `.claude/skills/*/SKILL.md`.)
 
+> **Responsibility split:** `AGENTS.md` contains portable project rules. The `docs/`
+> folder contains detailed procedures, examples, and edge-case guidance. If a rule is
+> summarized here and expanded in `docs/`, use the relevant docs file for detailed
+> execution.
+
 ---
 
 ## 1. Project
@@ -52,25 +57,19 @@ Verify every paper in this order:
 
 ## 6. Inclusion Criteria
 
-Include a paper only if **all** hold:
+Include a paper only if it is from **2024–2026**, Bangla/Bengali is **central or major**,
+an **official source** exists, and it has verifiable Bangla-related data, model,
+experiment, benchmark, or evaluation.
 
-- Published between 2024 and 2026.
-- Bangla/Bengali is a primary or major language of the study.
-- Published at a peer-reviewed venue (target venues preferred; others accepted if high
-  quality).
-- Has a verifiable official source link.
-- Dataset or experiments involve Bangla.
+For detailed examples and borderline cases, see `docs/INCLUSION_EXCLUSION.md`.
 
 ## 7. Exclusion Criteria
 
-Exclude a paper if **any** hold:
+Exclude a paper if Bangla/Bengali is only mentioned in passing, the source is
+unverifiable, the paper is a duplicate, the year/venue cannot be verified, or it is not a
+real research paper.
 
-- Bangla/Bengali is only mentioned in passing.
-- Duplicate of an already-included paper.
-- No verifiable official source link.
-- Unverifiable claims.
-- Preprint without peer review — **unless** no peer-reviewed version exists, in which
-  case include it and **flag it as a preprint**.
+For detailed examples and borderline cases, see `docs/INCLUSION_EXCLUSION.md`.
 
 ---
 
@@ -175,20 +174,12 @@ user approves the batch**. Never write to the artifacts mid-batch or without app
 
 ## 15. Verification Status Checklist
 
-For every paper, include this checklist — mark each item verified, or
-**`Not clearly stated`** if it cannot be confirmed:
+Every paper must pass the mandatory verification checklist before being added to a batch
+or artifact. The checklist must verify title, authors, year, venue, publication type,
+official URL, PDF, dataset, method, metrics, results, contribution, limitation, future
+work, duplicate status, and Bangla/Bengali centrality.
 
-- Title verified
-- Authors verified
-- Year verified
-- Official venue verified
-- Publication type verified
-- ACL URL verified
-- PDF checked
-- Dataset verified
-- Metrics verified
-- Results verified
-- Limitation verified
+For the full checklist, see `docs/CHECKLIST.md`.
 
 ## 16. Beginner-Friendly Bangla Summary Rule
 
