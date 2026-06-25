@@ -1,0 +1,598 @@
+
+<style>
+#app{display:flex;gap:0;height:780px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary)}
+#sidebar{width:200px;min-width:200px;border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;background:var(--color-background-secondary);padding:8px 0}
+#sidebar-title{font-size:11px;font-weight:500;color:var(--color-text-tertiary);padding:8px 14px 4px;text-transform:uppercase;letter-spacing:.05em}
+.nav-item{display:block;padding:6px 14px;font-size:13px;color:var(--color-text-secondary);cursor:pointer;border-left:2px solid transparent;line-height:1.3}
+.nav-item:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.nav-item.active{color:var(--color-text-primary);border-left:2px solid var(--color-border-info);background:var(--color-background-primary);font-weight:500}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:0.5px solid var(--color-border-tertiary);flex-shrink:0}
+#toolbar span{font-size:13px;color:var(--color-text-secondary);flex:1}
+#mode-btn{font-size:12px;padding:4px 10px}
+#save-btn{font-size:12px;padding:4px 10px}
+#editor-wrap{flex:1;overflow:hidden;position:relative}
+#editor{width:100%;height:100%;box-sizing:border-box;padding:16px 20px;font-family:var(--font-mono);font-size:13px;line-height:1.6;border:none;outline:none;resize:none;background:var(--color-background-primary);color:var(--color-text-primary)}
+#preview{width:100%;height:100%;box-sizing:border-box;padding:16px 20px;overflow-y:auto;display:none;font-size:14px;line-height:1.7;color:var(--color-text-primary)}
+#preview h1{font-size:20px;font-weight:500;margin:1.2rem 0 .5rem}
+#preview h2{font-size:17px;font-weight:500;margin:1.1rem 0 .4rem;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:4px}
+#preview h3{font-size:15px;font-weight:500;margin:1rem 0 .35rem}
+#preview p{margin:0 0 .6rem}
+#preview code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);padding:1px 5px;border-radius:4px}
+#preview pre{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;overflow-x:auto;margin:0 0 .8rem}
+#preview pre code{background:none;padding:0}
+#preview blockquote{border-left:3px solid var(--color-border-secondary);margin:0 0 .8rem;padding:2px 0 2px 14px;color:var(--color-text-secondary)}
+#preview ul,#preview ol{margin:0 0 .6rem 1.2rem}
+#preview li{margin-bottom:.2rem}
+#preview hr{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1rem 0}
+#preview strong{font-weight:500}
+#preview table{border-collapse:collapse;width:100%;margin-bottom:.8rem;font-size:13px;display:block;overflow-x:auto}
+#preview th,#preview td{border:0.5px solid var(--color-border-tertiary);padding:5px 10px;text-align:left;white-space:nowrap}
+#preview th{background:var(--color-background-secondary);font-weight:500}
+#statusbar{padding:5px 14px;font-size:11px;color:var(--color-text-tertiary);border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;display:flex;gap:12px}
+</style>
+
+<h2 class="sr-only">Bangla NLP Literature Review 2024–2026 — browsable and editable document</h2>
+
+<div id="app">
+  <div id="sidebar">
+    <div id="sidebar-title">Sections</div>
+    <div id="nav"></div>
+  </div>
+  <div id="main">
+    <div id="toolbar">
+      <span id="section-label">Full document</span>
+      <button id="mode-btn" onclick="toggleMode()">Preview</button>
+      <button id="save-btn" onclick="saveEdit()">Apply edit ↗</button>
+    </div>
+    <div id="editor-wrap">
+      <textarea id="editor" spellcheck="false"></textarea>
+      <div id="preview"></div>
+    </div>
+    <div id="statusbar">
+      <span id="stat-lines">Lines: 0</span>
+      <span id="stat-words">Words: 0</span>
+      <span id="stat-chars">Chars: 0</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+const RAW = `# Recent Work in Bangla NLP (2024–2026): Literature Review
+
+**MSc Thesis — Bangla NLP Literature Review**
+**Author:** Sarker Sunzid Mahmud | TU Dortmund
+**Last updated:** June 2026 | Batches 1–2 — 20 papers (verified against ACL Anthology + official PDFs)
+
+---
+
+## 1. Search Strategy
+
+- **Primary source:** ACL Anthology (aclanthology.org) — keywords: "Bangla", "Bengali", "NLP", "language model", "low-resource". Year filter: 2024–2026.
+- **Secondary:** Google Scholar and Semantic Scholar for cross-checking and gap-filling.
+- **Target venues:** ACL, EMNLP, NAACL, COLING, EACL, AACL. Workshop papers accepted if at a target-venue workshop (e.g., BLP-2025, associated with IJCNLP-AACL 2025).
+- **Batch size:** 10 papers per batch. Review required after each batch before proceeding.
+
+---
+
+## 2. Inclusion and Exclusion Criteria
+
+**Include:**
+- Published 2024–2026
+- Bangla/Bengali is primary or major language in the study
+- Peer-reviewed venue (target venues preferred; others accepted if high quality)
+- Verifiable source link (ACL Anthology preferred)
+
+**Exclude:**
+- Papers where Bangla is only mentioned in passing
+- Preprints without peer review (flagged if included as exception)
+- Duplicate entries
+- Papers with no verifiable source link
+
+---
+
+## 3. Literature Matrix — Batch 1
+
+| No | Title | Year | Venue | Type | Problem | Task | Dataset | Method | Main Result | Limitation |
+|----|-------|------|-------|------|---------|------|---------|--------|-------------|------------|
+| 1 | BenLLM-Eval | 2024 | LREC-COLING | Main Conf. | LLMs not benchmarked on Bengali | Multi-task eval | Custom (6 tasks) | ChatGPT, LLaMA-2, Claude-2 (zero-shot) | LLMs underperform fine-tuned models on most tasks; LLaMA-2 worst | Zero-shot only; 3 LLMs tested |
+| 2 | Bias & Context Length for Bangla | 2024 | Findings-ACL | Findings | Social bias in Bangla LMs unstudied | Bias measurement | New Bangla gender bias dataset | Adapted WEAT/SEAT metrics | Bias metrics depend on context length | Gender bias only; intrinsic measures only |
+| 3 | BanglaTLit | 2024 | Findings-EMNLP | Findings | Romanized Bangla untapped; no back-transliteration benchmark | Transliteration | BanglaTLit 42.7k; BanglaTLit-PT 245.7k | TB-encoders + dual encoder-decoder (T5) | Best BLEU 36.07 / ROUGE-1 78.92; SOTA on romanized classification | Single-domain source (TrickBd); noisy text |
+| 4 | BhasaBodh | 2025 | BLP-2025 | Workshop | Bangla dialects (Chittagong/Sylhet) underserved in MT | Machine Translation | 980 sentences/dialect, multi-way parallel | Fine-tuned NLLB-200, mBART-50 | BLEU 87.44 on Romanized→Standard; mBART-50 best | Modest scale; synthetic romanized data; 2 dialects |
+| 5 | BLUCK | 2025 | BLP-2025 | Workshop | No LLM benchmark for Bengali cultural/linguistic knowledge | MCQ Benchmark / QA | BLUCK 2,366 MCQs (23 categories) | GPT-4o, Claude-3.5, Gemini, LLaMA, DeepSeek | LLMs weak in Bengali phonetics; below English | Text-only MCQ; no open-ended evaluation |
+| 6 | BanHate | 2025 | BLP-2025 | Workshop | Outdated, narrow Bangla hate speech resources | Hate Speech Detection | BanHate 19,203 YouTube comments | Prompting + LoRA fine-tuning on LLMs | LoRA best; LLaMA-3.1-8B F1 ~84–86; implicit hate hard | YouTube only; single LoRA epoch |
+| 7 | BanHateME | 2025 | BLP-2025 | Workshop | No multimodal Bangla hate meme dataset | Multimodal Hate Detection | BanHateME 3,819 memes (3-level annotations) | LM+vision fusion (sum/concat/co-attention) + hierarchical loss | BanglaBERT+Swin concat best binary (F1 74.08); co-attention best for targets | Modest dataset; cultural cues hard |
+| 8 | CheckSent-BN | 2025 | BLP-2025 | Workshop | No Bengali dataset for claim checkworthiness + sentiment | Fact-check + Sentiment (MTL) | CheckSent-BN 11,568 news headlines | IndicBERTv2, BanglaBERT, mDeBERTa (STL/MTL) | IndicBERTv2 best in MTL setting | LLM-annotated; West-Bengal only; class imbalance |
+| 9 | BanglaTalk | 2025 | BLP-2025 | Workshop | No real-time Bengali dialect speech assistant | ASR / Speech System | RegSpeech12 (12 regions; 10 trained) | BRDialect: IndicWav2Vec + RTP + VITS TTS | WER ↓ 12.41–33.98% (abs WER 74.1%); 4.9s delay at 24 kbps | 4.9s latency; only 10/12 regions trained |
+| 10 | Reveal-Bangla | 2025 | BLP-2025 | Workshop | Multi-step reasoning in Bangla unevaluated | Multi-step Reasoning / QA | Reveal-Bangla: 104 Qs, 188 evidence, 355 steps | Eval of ~1B SLMs (EngLlama, BenLlama) | Models underuse Bangla reasoning steps; context helps non-binary Qs | Small set; only small models; single-annotator translation |
+
+---
+
+## 3b. Literature Matrix — Batch 2
+
+| No | Title | Year | Venue | Type | Problem | Task | Dataset | Method | Main Result | Limitation |
+|----|-------|------|-------|------|---------|------|---------|--------|-------------|------------|
+| 11 | Too Late to Train…? | 2025 | COLING 2025 | Main Conf. | Is a dedicated Bengali LLM still needed? | Multi-task LLM eval | Existing Bengali test sets (8 tasks) | Zero-shot LLMs vs fine-tuned BanglaT5/BanglaBERT; QLoRA LLaMA-3-8B | LLMs win QA/reasoning; BanglaT5 wins paraphrase (BLEU 32.80)/summ; Bengali tokenization inefficient | No human eval; FT limited to LLaMA-3-8B |
+| 12 | BengFoS (Literary Companions) | 2025 | EMNLP 2025 | Main Conf. | Bengali figures-of-speech identification unexplored | Multi-label FoS classification | BengFoS 3,148 sentences, 6 poets, 13 labels | Zero-shot + fine-tuned Llama-3/DeepSeek-R1; probing | Best DeepSeek-R1-7B (16-bit) weighted-F1 0.64; gains modest | 6-poet skew; class imbalance |
+| 13 | BanglaByT5 | 2025 | Findings-EMNLP | Findings | Subword tokenizers fragment morphologically rich Bangla | Byte-level LM (gen + classification) | 14 GB corpus (VACASPATI + IndicCorp-bn) | BanglaByT5 (~300M, byte-level ByT5) | Beats IndicBART/BanglaT5/BLOOM-1.1B; within ~5% of GPT2-XL at ~5x smaller | Limited 14 GB data; small variant |
+| 14 | BanNERD | 2025 | Findings-NAACL | Findings | Bangla NER lacks large quality datasets | Named Entity Recognition | BanNERD 85,175 sentences, 29 domains, 10 classes, IAA 0.88 | BanNERCEM (per-context ensemble) + PLM-CRF | 90.49% macro-F1 on BanNERD; SOTA on 5/6 prior datasets | Per-context passing slow; CW labels weak |
+| 15 | Bengali ChartSumm | 2025 | CHiPSAL 2025 | Workshop | No Bengali chart-to-text summarization benchmark | Chart-to-text summarization | Bengali ChartSumm 4,100 chart images + metadata + summaries | mT5, BanglaT5, Gemma-2b fine-tuned | mT5 best BLEU 0.2779/lowest error; BanglaT5 best ROUGE-1 0.0678 | Only bar/line charts; limited compute |
+| 16 | GRASP-ChoQ ⚠ | 2025 | BLP-2025 | Workshop | Political stance detection in Bangladesh context unstudied | Political stance detection | BPDisC 2,847 Bangla-English tweets (+6 non-Bangla sets) | KG retrieval (Neo4j) + Chain-of-Questions over LLMs | DeepSeek-R1+GRASP-ChoQ F1 93.33 (+40.6 vs zero-shot) | Text-only; no FT; reasoning done in English |
+| 17 | Read Between the Lines (BanglaBias) | 2025 | BLP-2025 | Workshop | Bangla political-bias datasets scarce | Political bias (ternary stance) | BanglaBias 200 articles, 46 events, 54 sources | Eval of 28 LLMs (zero/few-shot, reasoning prompt) | Best Qwen3-235B weighted-F1 0.74; "Neutral" hardest (F1↓0.00) | Small corpus; contamination risk; text-only |
+| 18 | BiCap | 2025 | BLP-2025 | Workshop | Bangla image captioning limited; no VL models | Image captioning | Chitron (existing) 15,438 image-caption pairs | ResNet-50 + Bahdanau attention + LSTM | BLEU-4 32.73 (+10 over strongest baseline); best human scores | Local-only features; sequential LSTM |
+| 19 | P6Jiggasha | 2025 | BLP-2025 | Workshop | LLMs on Bangla physics QA + cross-lingual consistency unmeasured | Physics QA (MCQ) / benchmark | P6Jiggasha 1,500 Bangla physics MCQs (+English) | GPT-4.1, Gemini-2.5-Pro, DeepSeek-R1; zero-shot/CoT | GPT-4.1 best Bangla Acc@1 86.67%; near-identical Bangla vs English | MCQ-only; no diagrams; physics-only |
+| 20 | ChakmaBridge ⚠ | 2025 | BLP-2025 | Workshop | Endangered Chakma lacks parallel corpora (Bangla as pivot) | Parallel corpus + MT | ChakmaBridge 807 sentences, 5 parallel forms | mBART-50, NLLB-200 fine-tuned; Gemini romanization | (Eng+Bangla)→Chakma NLLB-200 BLEU 0.5228 (+124% over next-best) | 807 sentences; clean LLM romanization; 20-sentence validation |
+
+⚠ Bangla-centrality flag — 16 (BPDisC is code-mixed Bangla-English; reasoning runs in English after translation; 6/7 eval datasets non-Bangla) and 20 (target language is endangered **Chakma**; Bangla is a major source/pivot, 3 of 5 parallel forms). Both retain Bangla-specific datasets/results and are published in the Bangla workshop, so both meet "Bangla is a major part," flagged here for transparency.
+
+---
+
+## 4. Topic-wise Grouping
+
+| Topic | Papers |
+|-------|--------|
+| Safety & Content Moderation | 6 (BanHate), 7 (BanHateME), 8 (CheckSent-BN) |
+| LLM Evaluation & Benchmarks | 1 (BenLLM-Eval), 5 (BLUCK), 11 (Too Late to Train), 19 (P6Jiggasha) |
+| Machine Translation (Dialectal / Endangered) | 4 (BhasaBodh), 20 (ChakmaBridge) |
+| Transliteration | 3 (BanglaTLit) |
+| Bias & Fairness | 2 (Bias & Context Length), 17 (BanglaBias) |
+| Speech Recognition | 9 (BanglaTalk) |
+| Reasoning / QA | 10 (Reveal-Bangla), 19 (P6Jiggasha) |
+| Named Entity Recognition | 14 (BanNERD) |
+| Language Models / Pretraining | 13 (BanglaByT5) |
+| Summarization | 15 (Bengali ChartSumm) |
+| Stance / Political NLP | 16 (GRASP-ChoQ), 17 (BanglaBias) |
+| Figurative & Literary NLP | 12 (BengFoS) |
+| Multimodal / Vision-Language | 7 (BanHateME), 18 (BiCap) |
+
+---
+
+## 5. Year-wise Trend
+
+| Year | Papers | Key Themes |
+|------|--------|------------|
+| 2024 | 3 | LLM evaluation, bias measurement, transliteration |
+| 2025 | 17 | Safety/hate speech, LLM benchmarks, dialectal & endangered NLP, speech, reasoning, NER, byte-level LM, summarization, stance/bias, figurative & multimodal NLP |
+| 2026 | 0 (Batches 1–2) | — |
+
+2025 dominates, driven both by the BLP-2025 workshop (associated with IJCNLP-AACL 2025) and by 2025 main-conference / Findings tracks (COLING, EMNLP, NAACL). Safety, LLM benchmarking, and dialectal/low-resource NLP are recurring themes.
+
+---
+
+## 6. Venue-wise Distribution
+
+| Official Venue | Publication Type | Year | Papers |
+|----------------|------------------|------|--------|
+| LREC-COLING 2024 | Main Conference | 2024 | 1 |
+| Findings of the ACL: ACL 2024 | Findings | 2024 | 1 |
+| Findings of the ACL: EMNLP 2024 | Findings | 2024 | 1 |
+| 31st Int'l Conf. on Computational Linguistics (COLING 2025) | Main Conference | 2025 | 1 |
+| 2025 Conf. on Empirical Methods in NLP (EMNLP 2025) | Main Conference | 2025 | 1 |
+| Findings of the ACL: EMNLP 2025 | Findings | 2025 | 1 |
+| Findings of the ACL: NAACL 2025 | Findings | 2025 | 1 |
+| First Workshop on Challenges in Processing South Asian Languages (CHiPSAL 2025) | Workshop | 2025 | 1 |
+| Second Workshop on Bangla Language Processing (BLP-2025) | Workshop | 2025 | 12 |
+
+---
+
+## 7. Research Problems Studied
+
+1. LLM capability evaluation on Bangla NLP tasks
+2. Social/gender bias measurement in Bangla pretrained language models
+3. Back-transliteration of romanized Bangla to standard script
+4. Dialectal machine translation (Chittagong/Sylhet ↔ Standard Bangla / English)
+5. Cultural and linguistic knowledge benchmarking for LLMs in Bengali
+6. Text-based hate speech detection (binary + fine-grained + target identification)
+7. Multimodal hate detection in Bangla memes (text + image)
+8. Joint claim checkworthiness detection + sentiment analysis in Bengali news
+9. Real-time dialect-aware automatic speech recognition for Bengali
+10. Cross-lingual multi-step reasoning evaluation in Bangla
+11. Necessity/viability of a dedicated Bengali LLM vs English-centric LLMs
+12. Figures-of-speech identification in Bengali literature
+13. Byte-level language modelling for morphologically rich Bangla
+14. Large-scale, validated Bangla Named Entity Recognition
+15. Bengali chart-to-text summarization
+16. Political stance detection in Bangladeshi political discourse
+17. Political bias detection in Bangla news (ternary stance)
+18. Bangla image captioning (multimodal generation)
+19. LLM benchmarking on Bangla physics QA with cross-lingual consistency
+20. Parallel-corpus construction and MT for the endangered Chakma language
+
+---
+
+## 8. Common Datasets (Introduced / Used)
+
+**Batch 1**
+
+| Dataset | Paper | Size | Task |
+|---------|-------|------|------|
+| BanglaTLit | Paper 3 | 42.7k pairs | Transliteration |
+| BanglaTLit-PT | Paper 3 | 245.7k | Pre-training corpus |
+| Bangla gender bias dataset | Paper 2 | Not clearly stated | Bias measurement |
+| BhasaBodh corpus | Paper 4 | 980 sentences/dialect | Dialectal MT |
+| BLUCK | Paper 5 | 2,366 MCQs, 23 categories | Cultural/linguistic QA |
+| BanHate | Paper 6 | 19,203 YouTube comments | Hate speech detection |
+| BanHateME | Paper 7 | 3,819 memes | Multimodal hate detection |
+| CheckSent-BN | Paper 8 | 11,568 news headlines | Fact-check + sentiment |
+| RegSpeech12 | Paper 9 | 12 regions (10 used) | Dialect ASR |
+| Reveal-Bangla | Paper 10 | 104 questions, 188 evidence, 355 steps | Multi-step reasoning |
+
+**Batch 2**
+
+| Dataset | Paper | Size | Task |
+|---------|-------|------|------|
+| BengFoS | Paper 12 | 3,148 sentences, 13 labels | Figures-of-speech |
+| BanglaByT5 corpus | Paper 13 | 14 GB | Byte-level LM pre-training |
+| BanNERD | Paper 14 | 85,175 sentences, 29 domains | NER |
+| Bengali ChartSumm | Paper 15 | 4,100 chart images | Chart-to-text |
+| BPDisC | Paper 16 | 2,847 tweets | Political stance |
+| BanglaBias | Paper 17 | 200 articles | Political bias |
+| Chitron † | Paper 18 | 15,438 image-caption pairs | Image captioning |
+| P6Jiggasha | Paper 19 | 1,500 physics MCQs | Physics QA |
+| ChakmaBridge | Paper 20 | 807 sentences, 5 forms | Endangered-language MT |
+
+---
+
+## 9. Common Models and Methods
+
+**Encoder models:** BanglaBERT, IndicBERTv2, MuRIL, mDeBERTa, BanglishBERT, XLM-RoBERTa, BERT-CRF
+
+**Generative LLMs:** ChatGPT (GPT-3.5), LLaMA-2, Claude-2, GPT-4/4o/4.1, Claude-3.5-Sonnet, Gemini-1.5-Pro/2.5-Pro/2.5-Flash, LLaMA-3-8B/70B, LLaMA-3.1-8B, LLaMA-3.3-70B, Qwen-2/2.5/3 (up to 235B), Gemma-2b/3-12B, Phi-4-14B, Mistral-7B/Large, DeepSeekV3, DeepSeek-R1, Aya-23
+
+**Seq2Seq / byte-level / MT models:** mBART-50, NLLB-200, mT5, BanglaT5, BanglaByT5, IndicBART, BLOOM, GPT-2, Paramanu
+
+**Speech models:** IndicWav2Vec, VITS-Bengali TTS
+
+**Adaptation methods:** LoRA/QLoRA, zero-shot/few-shot prompting, Chain-of-Thought, MTL, KG retrieval (Neo4j), BanNERCEM, WEAT/SEAT bias metrics
+
+---
+
+## 10. Research Gaps
+
+| Gap Type | Description | Relevant Papers |
+|----------|-------------|-----------------|
+| Dataset Gap | NER addressed by BanNERD; coreference, dialogue, math reasoning still lack data | 4, 10, 14 |
+| Benchmark Gap | No unified multi-task Bangla benchmark comparable to GLUE/SuperGLUE | 1, 5, 11, 15, 17, 19 |
+| Model Gap | No dedicated Bangla instruction-tuned LLM; BanglaByT5 is a step but small | 1, 5, 11, 13 |
+| Tokenization Gap | English-centric subword tokenizers fragment Bangla script | 11, 13 |
+| Evaluation Gap | Inconsistent metrics; no standard Bangla eval protocol | 2, 6, 7, 10, 19 |
+| Low-Resource / Dialect Gap | Only Chittagong/Sylhet covered; Chakma just started; diaspora ignored | 4, 9, 20 |
+| Domain Gap | Scientific QA started; medical, legal, financial domains absent | 11, 19 |
+| Multimodal Gap | Only hateful memes and image captioning; no Bangla VLM or VQA | 7, 15, 18 |
+| Practical Deployment Gap | Only BanglaTalk is a deployed system | 9 |
+
+---
+
+## 11. Possible Thesis Directions
+
+1. **Unified Bangla Benchmark:** Multi-task evaluation suite (NLU, generation, reasoning, cultural knowledge).
+2. **Instruction-Tuned Bangla LLM:** Fine-tune LLaMA/Mistral on Bangla instruction data; evaluate on BenLLM-Eval and BLUCK.
+3. **Dialectal NLP Expansion:** Extend BhasaBodh to more dialects beyond Chittagong/Sylhet.
+4. **Bias Mitigation:** Intersectional bias (gender × religion × dialect) and debiasing strategies.
+5. **Domain-Specific NLP:** First Bangla NLP corpus and models for medical or legal domains.
+6. **Multimodal Bangla NLP:** Extend BanHateME to VQA, image captioning using low-resource multimodal data.
+
+---
+
+## 12. Paper-by-Paper Summaries
+
+### Paper 1 — BenLLM-Eval
+
+| Field | Details |
+|-------|---------|
+| **Title** | BenLLM-Eval: A Comprehensive Evaluation into the Potentials and Pitfalls of Large Language Models on Bengali NLP |
+| **Authors** | Mohsinul Kabir, Mohammed Saidul Islam, Md Tahmid Rahman Laskar, Mir Tafseer Nayeem, M Saiful Bari, Enamul Hoque |
+| **Year** | 2024 |
+| **Official Venue** | LREC-COLING 2024 |
+| **Link** | https://aclanthology.org/2024.lrec-main.201/ |
+| **Problem** | LLMs evaluated mostly in English; no systematic Bangla NLP benchmark existed. |
+| **Task Type** | Multi-task evaluation: summarization, QA, paraphrasing, NLI, text classification, sentiment analysis |
+| **Main Result** | Zero-shot LLMs underperform fine-tuned models on most tasks; LLaMA-2 worst overall |
+| **Limitation** | Zero-shot only; only 3 LLMs; no instruction-tuned/fine-tuned LLM comparison |
+
+### Paper 2 — Bias & Context Length for Bangla
+
+| Field | Details |
+|-------|---------|
+| **Title** | An Empirical Study on the Characteristics of Bias upon Context Length Variation for Bangla |
+| **Authors** | Jayanta Sadhu, Ayan Khan, Abhik Bhattacharjee, Rifat Shahriyar |
+| **Year** | 2024 |
+| **Official Venue** | Findings of ACL 2024 |
+| **Link** | https://aclanthology.org/2024.findings-acl.88/ |
+| **Main Result** | Bias metrics show clear dependency on context length |
+| **Limitation** | Only gender bias; only intrinsic measures |
+
+### Paper 3 — BanglaTLit
+
+| Field | Details |
+|-------|---------|
+| **Title** | BanglaTLit: A Benchmark Dataset for Back-Transliteration of Romanized Bangla |
+| **Year** | 2024 |
+| **Official Venue** | Findings of EMNLP 2024 |
+| **Link** | https://aclanthology.org/2024.findings-emnlp.859/ |
+| **Main Result** | Best BLEU 36.07 / ROUGE-1 78.92; SOTA on romanized classification |
+| **Limitation** | Single-domain source (TrickBd); noisy text |
+
+### Paper 4 — BhasaBodh
+
+| Field | Details |
+|-------|---------|
+| **Title** | BhasaBodh: Bridging Bangla Dialects and Romanized Forms through Machine Translation |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.9/ |
+| **Main Result** | mBART-50 best; BLEU 87.44 on Romanized→Standard |
+| **Limitation** | Modest scale; synthetic romanized data; 2 dialects only |
+
+### Paper 5 — BLUCK
+
+| Field | Details |
+|-------|---------|
+| **Title** | BLUCK: A Benchmark Dataset for Bengali Linguistic Understanding and Cultural Knowledge |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.14/ |
+| **Main Result** | LLMs weak in Bengali phonetics; all below English performance |
+| **Limitation** | Text-only MCQ; no open-ended evaluation |
+
+### Paper 6 — BanHate
+
+| Field | Details |
+|-------|---------|
+| **Title** | BanHate: An Up-to-Date and Fine-Grained Bangla Hate Speech Dataset |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.19/ |
+| **Main Result** | LoRA best; LLaMA-3.1-8B F1 ~84–86; implicit hate hard |
+| **Limitation** | YouTube only; single LoRA epoch |
+
+### Paper 7 — BanHateME
+
+| Field | Details |
+|-------|---------|
+| **Title** | BanHateME: Bangla Memes thorough Detection, Categorization, and Target Profiling |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.15/ |
+| **Main Result** | BanglaBERT+Swin concat best binary (F1 74.08); co-attention best for targets |
+| **Limitation** | Modest dataset; cultural cues hard |
+
+### Paper 8 — CheckSent-BN
+
+| Field | Details |
+|-------|---------|
+| **Title** | CheckSent-BN: A Bengali Multi-Task Dataset for Claim Checkworthiness and Sentiment Classification |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.10/ |
+| **Main Result** | IndicBERTv2 best in MTL setting |
+| **Limitation** | LLM-annotated; West-Bengal only; class imbalance |
+
+### Paper 9 — BanglaTalk
+
+| Field | Details |
+|-------|---------|
+| **Title** | BanglaTalk: Towards Real-Time Speech Assistance for Bengali Regional Dialects |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.4/ |
+| **Main Result** | WER ↓ 12.41–33.98%; TTS MOS 4.49; 4.9s delay at 24 kbps |
+| **Limitation** | 4.9s latency; only 10/12 regions trained |
+
+### Paper 10 — Reveal-Bangla
+
+| Field | Details |
+|-------|---------|
+| **Title** | Reveal-Bangla: A Dataset for Cross-Lingual Multi-Step Reasoning Evaluation |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.3/ |
+| **Main Result** | Models underuse Bangla reasoning steps; context helps non-binary Qs |
+| **Limitation** | Small set; only ~1B models; single-annotator translation |
+
+### Paper 11 — Too Late to Train, Too Early To Use?
+
+| Field | Details |
+|-------|---------|
+| **Title** | Too Late to Train, Too Early To Use? A Study on Necessity and Viability of Low-Resource Bengali LLMs |
+| **Year** | 2025 |
+| **Official Venue** | COLING 2025 |
+| **Link** | https://aclanthology.org/2025.coling-main.79/ |
+| **Main Result** | LLMs win QA/reasoning; BanglaT5 wins paraphrase/summarization; Bengali tokenization inefficient |
+| **Limitation** | No human eval; FT limited to LLaMA-3-8B |
+
+### Paper 12 — BengFoS
+
+| Field | Details |
+|-------|---------|
+| **Title** | Can LLMs be Literary Companions?: Analysing LLMs on Bengali Figures of Speech Identification |
+| **Year** | 2025 |
+| **Official Venue** | EMNLP 2025 |
+| **Link** | https://aclanthology.org/2025.emnlp-main.941/ |
+| **Main Result** | Best DeepSeek-R1-7B (16-bit) weighted-F1 0.64; gains modest |
+| **Limitation** | 6-poet skew; class imbalance |
+
+### Paper 13 — BanglaByT5
+
+| Field | Details |
+|-------|---------|
+| **Title** | BanglaByT5: Byte-Level Modelling for Bangla |
+| **Year** | 2025 |
+| **Official Venue** | Findings of EMNLP 2025 |
+| **Link** | https://aclanthology.org/2025.findings-emnlp.297/ |
+| **Main Result** | Beats IndicBART/BanglaT5/BLOOM-1.1B; within ~5% of GPT2-XL at ~5x smaller |
+| **Limitation** | Limited 14 GB data; small variant only |
+
+### Paper 14 — BanNERD
+
+| Field | Details |
+|-------|---------|
+| **Title** | BanNERD: A Benchmark Dataset and Context-Driven Approach for Bangla Named Entity Recognition |
+| **Year** | 2025 |
+| **Official Venue** | Findings of NAACL 2025 |
+| **Link** | https://aclanthology.org/2025.findings-naacl.380/ |
+| **Main Result** | 90.49% macro-F1 on BanNERD; SOTA on 5/6 prior datasets |
+| **Limitation** | Per-context passing slow; CW labels weak |
+
+### Paper 15 — Bengali ChartSumm
+
+| Field | Details |
+|-------|---------|
+| **Title** | Bengali ChartSumm: A Benchmark Dataset for Bengali Chart to Text Summarization |
+| **Year** | 2025 |
+| **Official Venue** | CHiPSAL 2025 |
+| **Link** | https://aclanthology.org/2025.chipsal-1.4/ |
+| **Main Result** | mT5 best BLEU 0.2779; BanglaT5 best ROUGE-1 0.0678 |
+| **Limitation** | Only bar/line charts; limited compute |
+
+### Paper 16 — GRASP-ChoQ ⚠
+
+| Field | Details |
+|-------|---------|
+| **Title** | GRASP-ChoQ: Knowledge Graph-Based Retrieval Augmentation for Stance Detection |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.2/ |
+| **Main Result** | DeepSeek-R1+GRASP-ChoQ F1 93.33 (+40.6 vs zero-shot) |
+| **Limitation** | Text-only; reasoning done in English; ⚠ Bangla-centrality flagged |
+
+### Paper 17 — BanglaBias
+
+| Field | Details |
+|-------|---------|
+| **Title** | Read Between the Lines: A Benchmark for Uncovering Political Bias in Bangla News Articles |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.5/ |
+| **Main Result** | Best Qwen3-235B weighted-F1 0.74; "Neutral" hardest (F1 0.00) |
+| **Limitation** | Small corpus; contamination risk; text-only |
+
+### Paper 18 — BiCap
+
+| Field | Details |
+|-------|---------|
+| **Title** | BiCap: Bangla Image Captioning Using Attention-based Encoder-Decoder Architecture |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.6/ |
+| **Main Result** | BLEU-4 32.73 (+10 over strongest baseline); best human scores |
+| **Limitation** | Local-only features; sequential LSTM |
+
+### Paper 19 — P6Jiggasha
+
+| Field | Details |
+|-------|---------|
+| **Title** | P6Jiggasha: Benchmarking LLMs on Bangla Physics QA with Cross-lingual Evaluation |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.16/ |
+| **Main Result** | GPT-4.1 best Bangla Acc@1 86.67%; near-identical Bangla vs English |
+| **Limitation** | MCQ-only; no diagrams; physics-only |
+
+### Paper 20 — ChakmaBridge ⚠
+
+| Field | Details |
+|-------|---------|
+| **Title** | ChakmaBridge: A Five-Way Parallel Corpus for Navigating the Script Divide in an Endangered Language |
+| **Year** | 2025 |
+| **Official Venue** | BLP-2025 |
+| **Link** | https://aclanthology.org/2025.banglalp-1.21/ |
+| **Main Result** | NLLB-200 BLEU 0.5228 (+124% over next-best); Bangla source beats English |
+| **Limitation** | Only 807 sentences; ⚠ Bangla-centrality flagged (Chakma is target language) |
+
+---
+
+*Batches 1–2 complete — 20 papers. All metadata verified via ACL Anthology (June 2026). Awaiting review before Batch 3.*`;
+
+let currentMode = 'edit';
+let content = RAW;
+
+const editor = document.getElementById('editor');
+const preview = document.getElementById('preview');
+const nav = document.getElementById('nav');
+const sectionLabel = document.getElementById('section-label');
+
+editor.value = content;
+
+function buildNav() {
+  const lines = content.split('\n');
+  const headings = [];
+  lines.forEach((line, i) => {
+    const m = line.match(/^(#{1,3})\s+(.+)/);
+    if (m) headings.push({level: m[1].length, text: m[2].replace(/\*\*/g,''), line: i});
+  });
+  nav.innerHTML = '';
+  headings.forEach((h, idx) => {
+    const el = document.createElement('div');
+    el.className = 'nav-item';
+    el.style.paddingLeft = (8 + (h.level-1)*10) + 'px';
+    el.style.fontSize = h.level === 1 ? '13px' : h.level === 2 ? '12.5px' : '12px';
+    el.textContent = h.text.length > 28 ? h.text.slice(0,26)+'…' : h.text;
+    el.onclick = () => jumpTo(h, el);
+    nav.appendChild(el);
+  });
+}
+
+function jumpTo(h, el) {
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  sectionLabel.textContent = h.text.replace(/\*\*/g,'');
+  if (currentMode === 'edit') {
+    const lines = editor.value.split('\n');
+    let pos = 0;
+    for (let i = 0; i < h.line; i++) pos += lines[i].length + 1;
+    editor.focus();
+    editor.setSelectionRange(pos, pos + lines[h.line].length);
+    const lh = 20;
+    editor.scrollTop = Math.max(0, h.line * lh - 120);
+  } else {
+    const anchors = preview.querySelectorAll('h1,h2,h3');
+    const clean = h.text.replace(/\*\*/g,'').replace(/⚠/g,'').trim().toLowerCase();
+    for (const a of anchors) {
+      if (a.textContent.replace(/⚠/g,'').trim().toLowerCase().includes(clean.slice(0,15))) {
+        a.scrollIntoView({behavior:'smooth', block:'start'});
+        break;
+      }
+    }
+  }
+}
+
+function toggleMode() {
+  if (currentMode === 'edit') {
+    content = editor.value;
+    preview.innerHTML = marked.parse(content);
+    editor.style.display = 'none';
+    preview.style.display = 'block';
+    document.getElementById('mode-btn').textContent = 'Edit';
+    currentMode = 'preview';
+  } else {
+    editor.style.display = 'block';
+    preview.style.display = 'none';
+    document.getElementById('mode-btn').textContent = 'Preview';
+    currentMode = 'edit';
+  }
+}
+
+function saveEdit() {
+  content = editor.value;
+  buildNav();
+  const summary = content.slice(0, 200).replace(/\n/g,' ');
+  sendPrompt('I edited the literature review. Here is the updated content (first 200 chars): ' + summary + ' — please acknowledge and help me refine it further if needed.');
+}
+
+function updateStats() {
+  const txt = editor.value;
+  const lines = txt.split('\n').length;
+  const words = txt.trim() ? txt.trim().split(/\s+/).length : 0;
+  const chars = txt.length;
+  document.getElementById('stat-lines').textContent = 'Lines: ' + lines;
+  document.getElementById('stat-words').textContent = 'Words: ' + words;
+  document.getElementById('stat-chars').textContent = 'Chars: ' + chars;
+}
+
+editor.addEventListener('input', () => { content = editor.value; updateStats(); });
+
+buildNav();
+updateStats();
+</script>
