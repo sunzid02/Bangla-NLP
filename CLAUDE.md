@@ -1,113 +1,114 @@
-# CLAUDE.md — Operating Instructions for MSc Thesis Literature Review
+# CLAUDE.md — Project Entry Point
 
-## Project
 **MSc Thesis — Bangla NLP Literature Review**
 
-## Task
-Review recent work in Bangla NLP from **2024 to 2026**.
+This is the **root entry point** for Claude Code. Read it first. It gives you the goal,
+the repository layout, the core principles, and where to find everything else. It does
+**not** repeat the portable rules (those live in `AGENTS.md`) or the reusable skills
+(those live in `.claude/skills/*/SKILL.md`).
+
+---
+
+## Project Overview
+
+A **systematic, verifiable literature review** of Bangla NLP research published between
+**2024 and 2026**. The output is a literature review document and a paper matrix in
+`artifacts/`, built up batch by batch.
+
+**Guiding principle:** *Accuracy over speed.* Never guess. Never hallucinate.
 
 ## Main Research Question
+
 > What problems have researchers worked on in Bangla NLP from 2024 to 2026?
 
 ---
 
-## Target Venues
-ACL, EMNLP, NAACL, COLING, EACL, AACL
+## Repository Structure
 
-## Main Sources
-- **ACL Anthology**: https://aclanthology.org/
-- **Google Scholar**: https://scholar.google.com/
-- **Semantic Scholar**: https://www.semanticscholar.org/
-
----
-
-## Rules
-
-1. Work in small batches of **10 papers**.
-2. Search **ACL Anthology first**.
-3. Use Google Scholar and Semantic Scholar only to cross-check and discover missing papers.
-4. **Do not hallucinate.** Never invent paper titles, authors, links, or results.
-5. Every paper must have a **source link**.
-6. If year, venue, dataset, metric, or result is unclear, write `Not clearly stated`.
-7. **Avoid duplicate papers.**
-8. Do not include a paper just because it casually mentions Bangla or Bengali.
-9. Include only papers where **Bangla/Bengali is a meaningful part of the research**.
-10. **Stop after each batch and ask me to review** before proceeding.
-11. Keep output **concise** to save tokens.
-12. Use **table format first**, then short paper notes.
-13. Add one **beginner-friendly Bangla paragraph** at the end of each paper summary.
+| Path | Purpose |
+|------|---------|
+| `CLAUDE.md` | This entry point — orientation and high-level workflow. |
+| `AGENTS.md` | **Portable project rules** — inclusion/exclusion, required fields, venue & publication-type rules, anti-hallucination, batch workflow. |
+| `README.md` | Human-facing project overview. |
+| `.claude/skills/*/SKILL.md` | Reusable skills (Paper Finder, Extractor, Matrix Builder, Gap Finder, Bangla Explainer). |
+| `docs/CHECKLIST.md` | Per-paper verification checklist — run **before** adding any paper. |
+| `docs/SEARCH_STRATEGY.md` | Detailed search workflow. |
+| `docs/INCLUSION_EXCLUSION.md` | Full inclusion/exclusion criteria. |
+| `docs/VENUE_VERIFICATION.md` | Venue-naming rules and examples. |
+| `papers/raw/` | Source PDFs. |
+| `papers/notes/` | Per-paper extraction notes. |
+| `artifacts/` | Final deliverables: literature review (`.md`) and paper matrix (`.csv`). |
+| `batches/` | Working file per batch of 10 papers. |
+| `logs/` | `search-log.md` (searches run) and `rejected-papers.md` (excluded papers + reason). |
 
 ---
 
-## Required Fields Per Paper
+## Which Files to Follow
 
-| Field | Notes |
-|---|---|
-| Title | Exact title |
-| Authors | Full author list |
-| Year | Publication year |
-| Venue | Conference/journal name |
-| Link | Direct URL (ACL Anthology preferred) |
-| Problem | What problem does the paper address? |
-| Task type | e.g., NER, MT, SA, QA, etc. |
-| Dataset | Name and size if stated |
-| Method/Model | Architecture or approach used |
-| Evaluation Metric | e.g., F1, BLEU, Accuracy |
-| Main Result | Key numbers or findings |
-| Contribution | What is new or novel? |
-| Limitation | Stated or obvious limitations |
-| Beginner Bangla Summary | 3–5 sentences in simple Bangla |
+- **For project rules** (what to include, required fields, venue/publication rules,
+  anti-hallucination, batch workflow) → follow **`AGENTS.md`**.
+- **For reusable task instructions** (finding, extracting, matrix, gaps, Bangla
+  summaries) → follow **`.claude/skills/*/SKILL.md`**.
+- **Before adding any paper** → run **`docs/CHECKLIST.md`**.
+- For detailed procedures → `docs/SEARCH_STRATEGY.md`, `docs/INCLUSION_EXCLUSION.md`,
+  `docs/VENUE_VERIFICATION.md`.
+
+This entry point stays high-level; do not duplicate those files' content here.
 
 ---
 
-## Artifact to Maintain
+## Source Priority (highest → lowest)
 
-**Title:** `Recent Work in Bangla NLP (2024–2026): Literature Review`
+Always verify in this order:
 
-### Artifact Sections
-1. Search Strategy
-2. Inclusion and Exclusion Criteria
-3. Literature Matrix
-4. Topic-wise Grouping
-5. Year-wise Trend
-6. Venue-wise Distribution
-7. Research Problems Studied
-8. Common Datasets
-9. Common Models/Methods
-10. Research Gaps
-11. Possible Thesis Directions
-12. Paper-by-paper Summaries
+1. **ACL Anthology** (official) — https://aclanthology.org/
+2. Official conference proceedings
+3. Official paper PDF
+4. Google Scholar — https://scholar.google.com/
+5. Semantic Scholar — https://www.semanticscholar.org/
+
+**ACL Anthology always wins.** Never trust Google/Semantic Scholar over it for venue
+information. If ACL Anthology and the PDF disagree, **report both and flag the
+discrepancy** — never choose silently. Exact venue-naming and publication-type rules
+live in `AGENTS.md` and `docs/VENUE_VERIFICATION.md`.
 
 ---
 
-## Token-Saving Behavior
+## High-Level Workflow
 
-- Do not write long introductions.
-- Do not repeat the same explanation.
-- Use concise bullet points.
-- Only expand when explicitly asked.
-- Keep each paper summary **under 180 words** (plus Bangla summary).
+Work proceeds **in batches of 10 papers**. For each batch:
 
----
-
-## Workflow Per Batch
-
-1. Search ACL Anthology for Bangla/Bengali NLP papers (2024–2026).
-2. Collect 10 papers that pass inclusion criteria.
-3. Present a **summary table** first.
-4. Then write **short paper notes** (one per paper) with all required fields.
-5. End with: **"Batch [N] complete. Please review before I continue."**
-6. Update the artifact after approval.
+1. Search ACL Anthology first (`Bangla` + `Bengali`, 2024–2026), then cross-check
+   Google Scholar and Semantic Scholar. *(See `docs/SEARCH_STRATEGY.md`.)*
+2. Apply inclusion/exclusion criteria. *(See `AGENTS.md`.)*
+3. Extract the required fields for each paper. *(Fields defined in `AGENTS.md`.)*
+4. Run the verification checklist on every paper. *(See `docs/CHECKLIST.md`.)*
+5. Present a summary table first, then concise per-paper notes with a beginner Bangla
+   summary.
+6. Log searches in `logs/search-log.md`; log exclusions in `logs/rejected-papers.md`.
+7. **Stop and wait for approval. Update `artifacts/` only after approval.**
 
 ---
 
-## Inclusion Criteria
-- Published 2024–2026
-- Bangla/Bengali is a primary or major language in the study
-- Published at a peer-reviewed venue (target venues preferred; others accepted if high quality)
+## Strict Verification Principles
 
-## Exclusion Criteria
-- Papers where Bangla is only mentioned in passing
-- Preprints without any peer review (unless no venue alternative exists — flag these)
-- Duplicate entries
-- Papers with no verifiable source link
+- **Never hallucinate** titles, authors, venues, datasets, metrics, results, or URLs.
+- **Every paper needs an official source link.**
+- If a field cannot be verified, write **`Not clearly stated`**.
+- Verify against official sources in the priority order above.
+- The detailed field-by-field checklist is `docs/CHECKLIST.md` — it is mandatory.
+
+---
+
+## Batch Approval Rule
+
+**Never continue to the next batch, and never write to `artifacts/`, without explicit
+user approval.** End each batch with:
+
+> **"Batch [N] complete. Please review before I continue."**
+
+
+## Token-Saving Rule
+
+Keep this file as a short entry point. Do not duplicate detailed rules from `AGENTS.md`,
+`docs/`, or `.claude/skills/`. For normal outputs, prefer concise tables and short notes.

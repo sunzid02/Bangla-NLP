@@ -1,7 +1,7 @@
 # Recent Work in Bangla NLP (2024–2026): Literature Review
 
 **MSc Thesis — Bangla NLP Literature Review**
-**Author:** Sarker Sunzid Mahmud | TU Darmstadt
+**Author:** Sarker Sunzid Mahmud | TU Dortmund
 **Last updated:** June 2026 | Batch 1 — 10 papers
 
 ---
