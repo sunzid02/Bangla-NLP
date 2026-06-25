@@ -29,6 +29,8 @@ A **systematic, verifiable literature review** of Bangla NLP research published 
 |------|---------|
 | `CLAUDE.md` | This entry point — orientation and high-level workflow. |
 | `AGENTS.md` | **Portable project rules** — inclusion/exclusion, required fields, venue & publication-type rules, anti-hallucination, batch workflow. |
+| `PROJECT_STATUS.md` | **Persistent project memory** — current phase, batch status, paper count, pending items, next action. |
+| `WORKFLOW_RUN.md` | Defines the `RUN` command — what to read and do to continue from the latest state. |
 | `README.md` | Human-facing project overview. |
 | `.claude/skills/*/SKILL.md` | Reusable skills (Paper Finder, Extractor, Matrix Builder, Gap Finder, Bangla Explainer). |
 | `docs/CHECKLIST.md` | Per-paper verification checklist — run **before** adding any paper. |
@@ -78,15 +80,25 @@ live in `AGENTS.md` and `docs/VENUE_VERIFICATION.md`.
 
 Work proceeds **in batches of 10 papers**. For each batch:
 
-1. Search ACL Anthology first (`Bangla` + `Bengali`, 2024–2026), then cross-check
-   Google Scholar and Semantic Scholar. *(See `docs/SEARCH_STRATEGY.md`.)*
-2. Apply inclusion/exclusion criteria. *(See `AGENTS.md`.)*
-3. Extract the required fields for each paper. *(Fields defined in `AGENTS.md`.)*
-4. Run the verification checklist on every paper. *(See `docs/CHECKLIST.md`.)*
-5. Present a summary table first, then concise per-paper notes with a beginner Bangla
-   summary.
-6. Log searches in `logs/search-log.md`; log exclusions in `logs/rejected-papers.md`.
-7. **Stop and wait for approval. Update `artifacts/` only after approval.**
+1. Search ACL Anthology first using both `Bangla` and `Bengali` for years 2024–2026, then cross-check with Google Scholar and Semantic Scholar if needed. *(See `docs/SEARCH_STRATEGY.md`.)*
+
+2. Apply the inclusion and exclusion criteria. *(See `AGENTS.md` and `docs/INCLUSION_EXCLUSION.md`.)*
+
+3. Ensure the official PDF for every batch paper exists in `papers/raw/`. If a PDF is missing, download it from ACL Anthology or the official publisher before completing the batch.
+
+4. Extract the required fields for each paper. *(Fields are defined in `AGENTS.md`.)*
+
+5. Run the verification checklist on every paper. *(See `docs/CHECKLIST.md`.)*
+
+6. Perform the final self-review before marking the batch complete.
+
+7. Present a summary table first, then concise per-paper notes with a beginner-friendly Bangla summary.
+
+8. Log searches in `logs/search-log.md`; log excluded papers in `logs/rejected-papers.md`.
+
+9. Stop and wait for user approval.
+
+10. Update `artifacts/` only after approval.
 
 ---
 
@@ -108,7 +120,66 @@ user approval.** End each batch with:
 > **"Batch [N] complete. Please review before I continue."**
 
 
+## RUN Command
+
+When the user says `RUN`, follow `WORKFLOW_RUN.md`.
+
+Start by reading only:
+
+1. `CLAUDE.md`
+2. `WORKFLOW_RUN.md`
+3. `PROJECT_STATUS.md`
+
+Then open other files only if needed.
+
+Do not spawn subagents unless explicitly requested.
+
+At the end of every run, update `PROJECT_STATUS.md`.
+
+
 ## Token-Saving Rule
 
 Keep this file as a short entry point. Do not duplicate detailed rules from `AGENTS.md`,
 `docs/`, or `.claude/skills/`. For normal outputs, prefer concise tables and short notes.
+
+
+## Official PDF Management
+
+Every paper included in a verified batch must have its official PDF stored locally.
+
+Rules:
+
+- Check `papers/raw/` before downloading.
+- If the PDF already exists, reuse it.
+- If it does not exist, download the official PDF from ACL Anthology or the official publisher.
+- Save it in `papers/raw/` using a clean and consistent filename.
+- Do not keep temporary PDFs elsewhere.
+- Every verified paper must have its corresponding official PDF inside `papers/raw/` before the batch is completed.
+
+Local PDFs are for reproducibility only.
+
+Official metadata must always be verified from ACL Anthology or another official publisher.
+
+
+## Final Self-Review
+
+Before completing any batch, perform a final self-review.
+
+Verify that:
+
+- No hallucinated values were introduced.
+- Every factual claim is supported by the official paper or ACL Anthology.
+- Future Work is explicitly stated in the paper. Otherwise write "Not clearly stated".
+- Evaluation metrics match the official paper.
+- Official Venue matches ACL Anthology exactly.
+- Publication Type is correct.
+- No duplicate papers exist.
+- Every verified paper has its official PDF stored in `papers/raw/`.
+- Every required field is completed.
+- Every PDF in `papers/raw/` belongs to at least one paper in the current repository. Otherwise classify it as a future candidate or log it as rejected.
+
+If any value cannot be verified, use:
+
+Not clearly stated
+
+Do not infer missing information.
